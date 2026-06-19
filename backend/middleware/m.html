@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hazara University Admissions</title>
+<style>
+    :root {
+    --color-primary: #0050A3;
+    --color-secondary: #FFFFFF;
+    --color-accent: #00A850;
+    --color-text-dark: #333333;
+    --color-text-light: #FFFFFF;
+    --color-background-light: #F0F8FF;
+    --color-ranking-bg: #E0E0E0;
+    --color-the-logo-bg: #E53935;
+    --color-footer-bg: #E0F7FA;
+
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-xxl: 48px;
+    --spacing-xxxl: 64px;
+
+    --font-size-sm: 12px;
+    --font-size-base: 16px;
+    --font-size-md: 18px;
+    --font-size-lg: 24px;
+    --font-size-xl: 32px;
+    --font-size-xxl: 48px;
+    --font-size-xxxl: 64px;
+
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+}
+
+/* Reset and Base Styles */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: var(--color-text-dark);
+    background-color: var(--color-background-light);
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+ul {
+    list-style: none;
+}
+
+/* Header */
+.header {
+    background-color: var(--color-secondary);
+    padding: var(--spacing-md) 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.header__logo-icon {
+    width: 50px;
+    height: 50px;
+}
+
+.header__university-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.header__university-name {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+.header__university-type {
+    font-size: var(--font-size-md);
+    color: var(--color-text-dark);
+}
+
+/* Main Content */
+.main {
+    overflow-x: hidden;
+}
+
+/* Hero Section */
+.hero {
+    background-color: var(--color-primary);
+    color: var(--color-secondary);
+    text-align: center;
+    padding: var(--spacing-xxl) var(--spacing-md);
+    position: relative;
+}
+
+.hero__container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero__title {
+    font-size: var(--font-size-xxxl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-lg);
+}
+
+.hero__registrations {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.hero__registrations-label {
+    background-color: var(--color-accent);
+    color: var(--color-secondary);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+.hero__registrations-date {
+    font-size: var(--font-size-xxl);
+    font-weight: var(--font-weight-bold);
+}
+
+.hero__programs {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-medium);
+    margin-bottom: var(--spacing-sm);
+}
+
+.hero__lateral-entry {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-regular);
+}
+
+/* Content Section */
+.content {
+    padding: var(--spacing-xxl) 0;
+}
+
+.content__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xxl);
+}
+
+.content__left {
+    display: flex;
+    justify-content: center;
+}
+
+.ranking-card {
+    background-color: var(--color-secondary);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: 100%;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+}
+
+.ranking-card__header {
+    background-color: var(--color-ranking-bg);
+    padding: var(--spacing-md);
+    text-align: center;
+}
+
+.ranking-card__ranked-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    display: block;
+    margin-bottom: var(--spacing-xs);
+}
+
+.ranking-card__rank {
+    font-size: var(--font-size-xxl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    display: block;
+}
+
+.ranking-card__location {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-dark);
+}
+
+.ranking-card__body {
+    padding: var(--spacing-lg);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    text-align: center;
+}
+
+.ranking-card__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.ranking-card__item-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-dark);
+    margin-bottom: var(--spacing-xs);
+}
+
+.ranking-card__item-value {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+.ranking-card__footer {
+    background-color: var(--color-the-logo-bg);
+    color: var(--color-secondary);
+    padding: var(--spacing-md);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ranking-card__the-logo {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-xs);
+}
+
+.ranking-card__the-text {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-regular);
+}
+
+.content__right {
+    display: flex;
+    justify-content: center;
+}
+
+.why-hazara {
+    background-color: var(--color-secondary);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: var(--spacing-lg);
+    width: 100%;
+    max-width: 500px;
+}
+
+.why-hazara__title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.why-hazara__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.why-hazara__item {
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-regular);
+    position: relative;
+    padding-left: var(--spacing-lg);
+}
+
+.why-hazara__item::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+    font-weight: var(--font-weight-bold);
+    font-size: var(--font-size-lg);
+    top: -2px;
+}
+
+/* Gallery Section */
+.gallery {
+    padding: var(--spacing-xxl) 0;
+    background-color: var(--color-secondary);
+}
+
+.gallery__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.gallery__item {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.gallery__item--large {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+.gallery__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Apply Online Section */
+.apply-online {
+    padding: var(--spacing-xxl) 0;
+    text-align: center;
+}
+
+.apply-online__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+.apply-online__title {
+    font-size: var(--font-size-xxl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.apply-online__link {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-accent);
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.apply-online__link:hover {
+    color: var(--color-primary);
+}
+
+/* Footer */
+.footer {
+    background-color: var(--color-footer-bg);
+    padding: var(--spacing-lg) 0;
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-dark);
+}
+
+.footer__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+}
+
+/* Responsive Breakpoints */
+@media (min-width: 768px) {
+    .content__container {
+        grid-template-columns: 1fr 2fr;
+    }
+
+    .content__left {
+        justify-content: flex-start;
+    }
+
+    .content__right {
+        justify-content: flex-start;
+    }
+
+    .gallery__container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .gallery__item--large {
+        grid-column: span 2;
+        grid-row: span 1;
+    }
+}
+
+@media (min-width: 1024px) {
+    .header__container {
+        justify-content: space-between;
+    }
+
+    .content__container {
+        grid-template-columns: 1fr 1.5fr;
+    }
+
+    .gallery__container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .gallery__item--large {
+        grid-column: span 2;
+        grid-row: span 2;
+    }
+}
+</style>
+</head>
+<body>
+    <header class="header">
+        <div class="header__container">
+            <div class="header__logo">
+                <svg class="header__logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50 0C22.3858 0 0 22.3858 0 50C0 77.6142 22.3858 100 50 100C77.6142 100 100 77.6142 100 50C100 22.3858 77.6142 0 50 0ZM72.3985 30.0001C72.3985 35.5229 67.9213 40.0001 62.3985 40.0001C56.8757 40.0001 52.3985 35.5229 52.3985 30.0001C52.3985 24.4773 56.8757 20.0001 62.3985 20.0001C67.9213 20.0001 72.3985 24.4773 72.3985 30.0001ZM37.6015 30.0001C37.6015 35.5229 33.1243 40.0001 27.6015 40.0001C22.0787 40.0001 17.6015 35.5229 17.6015 30.0001C17.6015 24.4773 22.0787 20.0001 27.6015 20.0001C33.1243 20.0001 37.6015 24.4773 37.6015 30.0001ZM50 60.0001C44.4771 60.0001 40 64.4772 40 70.0001C40 75.523 44.4771 80.0001 50 80.0001C55.5229 80.0001 60 75.523 60 70.0001C60 64.4772 55.5229 60.0001 50 60.0001ZM72.3985 70.0001C72.3985 75.5229 67.9213 80.0001 62.3985 80.0001C56.8757 80.0001 52.3985 75.5229 52.3985 70.0001C52.3985 64.4773 56.8757 60.0001 62.3985 60.0001C67.9213 60.0001 72.3985 64.4773 72.3985 70.0001ZM37.6015 70.0001C37.6015 75.5229 33.1243 80.0001 27.6015 80.0001C22.0787 80.0001 17.6015 75.5229 17.6015 70.0001C17.6015 64.4773 22.0787 60.0001 27.6015 60.0001C33.1243 60.0001 37.6015 64.4773 37.6015 70.0001Z" fill="#0050A3"/>
+                </svg>
+            </div>
+            <div class="header__university-info">
+                <h1 class="header__university-name">Hazara University, Mansehra</h1>
+                <p class="header__university-type">A Public Sector University</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <section class="hero">
+            <div class="hero__container">
+                <h2 class="hero__title">ADMISSIONS</h2>
+                <div class="hero__registrations">
+                    <span class="hero__registrations-label">REGISTRATIONS OPEN</span>
+                    <span class="hero__registrations-date">SPRING 2026</span>
+                </div>
+                <p class="hero__programs">BS MS/MPhil& PhD Programs</p>
+                <p class="hero__lateral-entry">Lateral Entry For BA/BSC & Associate Degree Holders</p>
+            </div>
+        </section>
+
+        <section class="content">
+            <div class="content__container">
+                <div class="content__left">
+                    <div class="ranking-card">
+                        <div class="ranking-card__header">
+                            <span class="ranking-card__ranked-label">RANKED</span>
+                            <span class="ranking-card__rank">01</span>
+                            <span class="ranking-card__location">IN KP</span>
+                        </div>
+                        <div class="ranking-card__body">
+                            <div class="ranking-card__item">
+                                <span class="ranking-card__item-label">UI</span>
+                                <span class="ranking-card__item-value">Ranking</span>
+                            </div>
+                            <div class="ranking-card__item">
+                                <span class="ranking-card__item-label">World</span>
+                                <span class="ranking-card__item-value">545</span>
+                            </div>
+                            <div class="ranking-card__item">
+                                <span class="ranking-card__item-label">Rata</span>
+                                <span class="ranking-card__item-value">3rd</span>
+                            </div>
+                            <div class="ranking-card__item">
+                                <span class="ranking-card__item-label">Pakistan</span>
+                                <span class="ranking-card__item-value">10th</span>
+                            </div>
+                            <div class="ranking-card__item">
+                                <span class="ranking-card__item-label">KP</span>
+                                <span class="ranking-card__item-value">01</span>
+                            </div>
+                            <div class="ranking-card__item">
+                                <span class="ranking-card__item-label">Quality Education</span>
+                                <span class="ranking-card__item-value">80.1</span>
+                            </div>
+                        </div>
+                        <div class="ranking-card__footer">
+                            <div class="ranking-card__the-logo">THE</div>
+                            <p class="ranking-card__the-text">The World University Ranking</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="content__right">
+                    <div class="why-hazara">
+                        <h3 class="why-hazara__title">Why Hazara University</h3>
+                        <ul class="why-hazara__list">
+                            <li class="why-hazara__item">Impactful research and publications</li>
+                            <li class="why-hazara__item">100+ Disciplines Programs with HEC Recognized Degrees</li>
+                            <li class="why-hazara__item">Modern Campus with State-of-the-Art Infrastructure</li>
+                            <li class="why-hazara__item">Digital Platform for Effective Learning</li>
+                            <li class="why-hazara__item">Affordable Education with Merit-Based Scholarships</li>
+                            <li class="why-hazara__item">State of the Art Research and Development in Open Innovation</li>
+                            <li class="why-hazara__item">Highly Qualified, High-Impact Faculty Members</li>
+                            <li class="why-hazara__item">Global Exposure and International Linkages</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="gallery">
+            <div class="gallery__container">
+                <div class="gallery__item gallery__item--large">
+                    <img src="placeholder-image-1.jpg" alt="University campus image" class="gallery__image">
+                </div>
+                <div class="gallery__item">
+                    <img src="placeholder-image-2.jpg" alt="Students in a lab" class="gallery__image">
+                </div>
+                <div class="gallery__item">
+                    <img src="placeholder-image-3.jpg" alt="University building exterior" class="gallery__image">
+                </div>
+                <div class="gallery__item">
+                    <img src="placeholder-image-4.jpg" alt="Students in a group activity" class="gallery__image">
+                </div>
+                <div class="gallery__item">
+                    <img src="placeholder-image-5.jpg" alt="Students in a computer lab" class="gallery__image">
+                </div>
+            </div>
+        </section>
+
+        <section class="apply-online">
+            <div class="apply-online__container">
+                <h2 class="apply-online__title">Apply online</h2>
+                <a href="https://www.admissions.hu.edu.pk" class="apply-online__link" target="_blank">www.admissions.hu.edu.pk</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer__container">
+            <p class="footer__contact-info">For Details contact: Student Service Center, Hazara University - Mansehra. Phone: 0997-445453, 099744526, 03424398991</p>
+        </div>
+    </footer>
+</body>
+</html>
+
