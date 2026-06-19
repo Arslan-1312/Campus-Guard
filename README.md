@@ -1,4 +1,4 @@
-# 🛡️ HU Campus Guard
+#  HU Campus Guard
 
 **Hazara University Campus Issue Reporting & Management System**
 
