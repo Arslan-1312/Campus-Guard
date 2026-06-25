@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
 const dotenv = require('dotenv');
 const path = require('path');
 
@@ -38,10 +40,13 @@ const allowedOrigins = [
 const corsOptions = {
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, curl, Postman)
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin) {
+      return callback(null, true);
+    }
+    if (allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
       callback(null, true);
     } else {
-      callback(null, true); // Be permissive in production — JWT handles auth
+      callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
@@ -62,11 +67,30 @@ app.set('io', io);
 // Socket handler
 socketHandler(io);
 
-// Rate limiting
+// General rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 200,
   message: { success: false, message: 'Too many requests, please try again later.' },
+});
+
+// Stricter rate limiting for authentication endpoints to block brute-force attacks
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 requests max
+  message: { success: false, message: 'Too many login attempts. Please try again after 15 minutes.' },
+});
+
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5,
+  message: { success: false, message: 'Too many password reset requests. Please try again after 15 minutes.' },
+});
+
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10,
+  message: { success: false, message: 'Too many accounts created from this IP. Please try again after an hour.' },
 });
 
 // ─── MongoDB connection with caching for serverless ──────────────────────────
@@ -80,12 +104,22 @@ const connectDB = async () => {
 };
 
 // Middleware
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  contentSecurityPolicy: false
+}));
+app.use(mongoSanitize());
 app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(morgan('dev'));
 const uploadDir = process.env.VERCEL ? '/tmp' : path.join(__dirname, 'uploads');
 app.use('/uploads', express.static(uploadDir));
+
+// Apply strict rate limiting on auth endpoints before generic api rate limiter
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', registerLimiter);
+app.use('/api/auth/forgot-password', forgotPasswordLimiter);
 app.use('/api', limiter);
 
 // Ensure DB connected before every request (critical for Vercel serverless)

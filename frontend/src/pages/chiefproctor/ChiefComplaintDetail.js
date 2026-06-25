@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../../components/shared/Layout';
 import { StatusBadge, PriorityBadge, CategoryBadge } from '../../components/shared/StatusBadge';
 import { useSocket } from '../../context/SocketContext';
-import api from '../../utils/api';
+import api, { getEvidenceUrl } from '../../utils/api';
 import toast from 'react-hot-toast';
 import { downloadComplaint } from '../../utils/downloadComplaint';
 
@@ -28,6 +28,17 @@ const ChiefComplaintDetail = () => {
   const refetch = async () => {
     const { data } = await api.get(`/complaints/${id}`);
     setComplaint(data.complaint);
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this complaint? This action cannot be undone.')) return;
+    try {
+      await api.delete(`/complaints/${complaint._id}`);
+      toast.success('Complaint deleted successfully');
+      navigate('/chief/complaints');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete complaint');
+    }
   };
 
   useEffect(() => {
@@ -126,16 +137,19 @@ const ChiefComplaintDetail = () => {
                 <i className="bi bi-pencil me-1" />Update Status
               </button>
             )}
+            <button className="btn btn-sm btn-outline-danger" onClick={handleDelete} style={{ borderRadius: 8 }}>
+              <i className="bi bi-trash me-1" />Delete
+            </button>
           </div>
         </div>
 
         {/* Main info */}
         <div className="cg-card mb-3">
           <div className="d-flex justify-content-between flex-wrap gap-2 mb-2">
-            <span style={{ fontFamily: 'monospace', fontSize: 13, color: '#3949ab', fontWeight: 700 }}>{complaint.referenceNumber}</span>
+            <span style={{ fontFamily: 'monospace', fontSize: 13, color: 'var(--violet-light)', fontWeight: 700 }}>{complaint.referenceNumber}</span>
             <StatusBadge status={complaint.status} />
           </div>
-          <h4 style={{ fontWeight: 800, color: '#1a237e' }}>{complaint.title}</h4>
+          <h4 style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{complaint.title}</h4>
           <div className="d-flex flex-wrap gap-2 mb-3">
             <CategoryBadge category={complaint.category} />
             <PriorityBadge priority={complaint.priority} />
@@ -145,9 +159,9 @@ const ChiefComplaintDetail = () => {
               </span>
             )}
           </div>
-          <p style={{ color: '#424242', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{complaint.description}</p>
+          <p style={{ color: 'var(--text-primary)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{complaint.description}</p>
 
-          <div className="row g-2 mt-2" style={{ fontSize: 13, color: '#757575' }}>
+          <div className="row g-2 mt-2" style={{ fontSize: 13, color: 'var(--text-muted)' }}>
             <div className="col-sm-6">
               <i className="bi bi-person me-1" />
               {complaint.isAnonymous && !complaint.submittedBy
@@ -185,7 +199,7 @@ const ChiefComplaintDetail = () => {
             {complaint.assignedTo && (
               <div className="col-sm-6">
                 <i className="bi bi-person-check me-1" />
-                Assigned to: <strong style={{ color: '#2e7d32' }}>{complaint.assignedTo.name}</strong>
+                Assigned to: <strong style={{ color: 'var(--cyan)' }}>{complaint.assignedTo.name}</strong>
                 {complaint.assignedAt && <span style={{ fontSize: 11, marginLeft: 4 }}>({new Date(complaint.assignedAt).toLocaleDateString()})</span>}
               </div>
             )}
@@ -198,27 +212,27 @@ const ChiefComplaintDetail = () => {
         {/* Evidence */}
         {complaint.evidence?.length > 0 && (
           <div className="cg-card mb-3">
-            <h6 style={{ fontWeight: 700, color: '#1a237e', marginBottom: 12 }}>Evidence ({complaint.evidence.length})</h6>
+            <h6 style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>Evidence ({complaint.evidence.length})</h6>
             <div className="d-flex flex-wrap gap-2">
               {complaint.evidence.map((ev, i) => (
-                <a key={i} href={ev.url} target="_blank" rel="noreferrer"
+                <a key={i} href={getEvidenceUrl(ev.url)} target="_blank" rel="noreferrer"
                   style={{ borderRadius: 8, overflow: 'hidden', border: '2px solid #e0e0e0', display: 'block' }}>
                   {(ev.resourceType === 'image' || ev.url.match(/\.(jpg|jpeg|png|gif|webp)$/i))
                     ? (
                       <>
-                        <img src={ev.url} alt="evidence" style={{ width: 110, height: 85, objectFit: 'cover' }} onError={(e) => { e.target.style.display='none'; if (e.target.nextSibling) e.target.nextSibling.style.display='flex'; }} />
+                        <img src={getEvidenceUrl(ev.url)} alt="evidence" style={{ width: 110, height: 85, objectFit: 'cover' }} onError={(e) => { e.target.style.display='none'; if (e.target.nextSibling) e.target.nextSibling.style.display='flex'; }} />
                         <div className="fallback-icon" style={{ width: 110, height: 85, background: '#f5f5f5', display: 'none', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 4 }}>
-                          <i className="bi bi-file-earmark-image" style={{ fontSize: 24, color: '#9e9e9e' }} />
-                          <span style={{ fontSize: 10, color: '#9e9e9e' }}>Image (Broken)</span>
+                          <i className="bi bi-file-earmark-image" style={{ fontSize: 24, color: 'var(--text-muted)' }} />
+                          <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>Image (Broken)</span>
                         </div>
                       </>
                     )
                     : null
                   }
                   {(ev.resourceType !== 'image' && !ev.url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) && (
-                    <div style={{ width: 110, height: 85, background: '#e8eaf6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 4 }}>
-                      <i className="bi bi-file-earmark" style={{ fontSize: 24, color: '#3949ab' }} />
-                      <span style={{ fontSize: 10, color: '#555' }}>{ev.originalName?.slice(0, 12) || 'File'}</span>
+                    <div style={{ width: 110, height: 85, background: 'var(--bg-base)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 4 }}>
+                       <i className="bi bi-file-earmark" style={{ fontSize: 24, color: 'var(--violet-light)' }} />
+                      <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{ev.originalName?.slice(0, 12) || 'File'}</span>
                     </div>
                   )}
                 </a>
@@ -229,25 +243,25 @@ const ChiefComplaintDetail = () => {
 
         {/* Resolution */}
         {complaint.resolution && (
-          <div className="cg-card mb-3" style={{ borderLeft: '4px solid #2e7d32' }}>
-            <h6 style={{ fontWeight: 700, color: '#2e7d32' }}><i className="bi bi-check-circle me-2" />Resolution</h6>
+          <div className="cg-card mb-3" style={{ borderLeft: '4px solid var(--cyan)' }}>
+            <h6 style={{ fontWeight: 700, color: 'var(--cyan)' }}><i className="bi bi-check-circle me-2" />Resolution</h6>
             <p style={{ margin: 0 }}>{complaint.resolution}</p>
-            {complaint.resolvedAt && <div style={{ fontSize: 12, color: '#9e9e9e', marginTop: 6 }}>Resolved: {new Date(complaint.resolvedAt).toLocaleString()}</div>}
+            {complaint.resolvedAt && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 6 }}>Resolved: {new Date(complaint.resolvedAt).toLocaleString()}</div>}
           </div>
         )}
 
         {/* Status history */}
         {complaint.statusHistory?.length > 0 && (
           <div className="cg-card mb-3">
-            <h6 style={{ fontWeight: 700, color: '#1a237e', marginBottom: 12 }}>Status Timeline</h6>
+            <h6 style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>Status Timeline</h6>
             <div className="comment-timeline">
               {complaint.statusHistory.map((h, i) => (
                 <div key={i} className="comment-item">
                   <div style={{ fontSize: 13 }}>
                     <StatusBadge status={h.status} />
                     {h.changedBy && <span className="ms-2 text-muted" style={{ fontSize: 12 }}>by {h.changedBy.name}</span>}
-                    {h.note && <span className="ms-2" style={{ color: '#555' }}>— {h.note}</span>}
-                    <div style={{ fontSize: 11, color: '#9e9e9e', marginTop: 3 }}>{new Date(h.changedAt).toLocaleString()}</div>
+                    {h.note && <span className="ms-2" style={{ color: 'var(--text-secondary)' }}>— {h.note}</span>}
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>{new Date(h.changedAt).toLocaleString()}</div>
                   </div>
                 </div>
               ))}
@@ -257,15 +271,15 @@ const ChiefComplaintDetail = () => {
 
         {/* Comments */}
         <div className="cg-card">
-          <h6 style={{ fontWeight: 700, color: '#1a237e', marginBottom: 14 }}>
+          <h6 style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: 14 }}>
             All Comments ({complaint.comments?.length || 0})
           </h6>
           <div className="comment-timeline mb-3">
-            {complaint.comments?.length === 0 && <p style={{ color: '#9e9e9e', fontSize: 14 }}>No comments yet.</p>}
+            {complaint.comments?.length === 0 && <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>No comments yet.</p>}
             {complaint.comments?.map((c, i) => (
               <div key={i} className="comment-item">
                 <div style={{
-                  background: c.isInternal ? 'rgba(230,81,0,0.1)' : (c.authorRole === 'student' ? 'rgba(255,255,255,0.05)' : 'rgba(124,58,237,0.1)'),
+                  background: c.isInternal ? 'rgba(230,81,0,0.1)' : (c.authorRole === 'student' ? 'rgba(255,255,255,0.05)' : 'rgba(225,29,72,0.1)'),
                   borderRadius: 8, padding: '10px 14px',
                   border: c.isInternal ? '1px solid rgba(230,81,0,0.3)' : '1px solid var(--glass-border)',
                 }}>
@@ -285,7 +299,7 @@ const ChiefComplaintDetail = () => {
 
           <div className="form-check mb-2">
             <input className="form-check-input" type="checkbox" id="internalChk" checked={isInternal} onChange={(e) => setIsInternal(e.target.checked)} />
-            <label className="form-check-label" htmlFor="internalChk" style={{ fontSize: 13, color: isInternal ? '#e65100' : '#555' }}>
+            <label className="form-check-label" htmlFor="internalChk" style={{ fontSize: 13, color: isInternal ? '#e65100' : 'var(--text-secondary)' }}>
               <i className="bi bi-lock me-1" />Internal note (proctors only, hidden from student)
             </label>
           </div>
@@ -302,7 +316,7 @@ const ChiefComplaintDetail = () => {
       {/* Assign Modal */}
       {assignModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-          <div style={{ background: '#1a1040', borderRadius: 16, padding: 28, width: '100%', maxWidth: 460, border: '1px solid var(--glass-border)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
+          <div style={{ background: 'var(--bg-surface)', borderRadius: 16, padding: 28, width: '100%', maxWidth: 460, border: '1px solid var(--glass-border)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
             <h5 style={{ fontWeight: 800, color: 'var(--text-primary)', marginBottom: 20 }}>
               <i className="bi bi-person-plus me-2" />Assign to Proctor
             </h5>
@@ -352,7 +366,7 @@ const ChiefComplaintDetail = () => {
       {/* Status Modal */}
       {statusModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-          <div style={{ background: '#1a1040', borderRadius: 16, padding: 28, width: '100%', maxWidth: 440, border: '1px solid var(--glass-border)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
+          <div style={{ background: 'var(--bg-surface)', borderRadius: 16, padding: 28, width: '100%', maxWidth: 440, border: '1px solid var(--glass-border)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
             <h5 style={{ fontWeight: 800, color: 'var(--text-primary)', marginBottom: 20 }}>Update Status</h5>
             <form onSubmit={handleStatusUpdate}>
               <div className="mb-3">

@@ -116,9 +116,9 @@ const ChatPanel = ({ complaintId, assignedTo, submittedBy }) => {
   };
 
   const avatarColor = (role) => {
-    if (role === 'student') return 'linear-gradient(135deg,#06b6d4,#6366f1)';
-    if (role === 'proctor') return 'linear-gradient(135deg,#10b981,#06b6d4)';
-    return 'linear-gradient(135deg,#7c3aed,#f59e0b)';
+    if (role === 'student') return 'linear-gradient(135deg,#e11d48,#dc2626)';
+    if (role === 'proctor') return 'linear-gradient(135deg,#16a34a,#15803d)';
+    return 'linear-gradient(135deg,#e11d48,#16a34a)';
   };
 
   if (!chatAvailable) {
@@ -142,12 +142,12 @@ const ChatPanel = ({ complaintId, assignedTo, submittedBy }) => {
   }, {});
 
   return (
-    <div className="cg-card" style={{ padding: 0, overflow: 'hidden' }}>
+    <div className="cg-card cg-chat-panel" style={{ padding: 0, overflow: 'hidden' }}>
       {/* Header */}
       <div className="cg-chat-header">
         <div style={{
           width: 34, height: 34, borderRadius: '50%',
-          background: 'linear-gradient(135deg,#7c3aed,#06b6d4)',
+          background: 'linear-gradient(135deg,#e11d48,#16a34a)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 16,
         }}>💬</div>
@@ -173,12 +173,12 @@ const ChatPanel = ({ complaintId, assignedTo, submittedBy }) => {
       {/* Messages */}
       <div className="cg-chat-messages">
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px 0', color: '#475569' }}>
+          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
             <div style={{ fontSize: 28, marginBottom: 8 }}>⏳</div>
             Loading messages…
           </div>
         ) : messages.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 0', color: '#475569' }}>
+          <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
             <div style={{ fontSize: 36, marginBottom: 8 }}>👋</div>
             <div style={{ fontSize: 14 }}>No messages yet. Start the conversation!</div>
           </div>

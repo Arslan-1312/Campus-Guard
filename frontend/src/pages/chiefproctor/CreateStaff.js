@@ -34,7 +34,7 @@ const CreateStaff = () => {
     <Layout title="Add Staff Member">
       <div style={{ maxWidth: 540, margin: '0 auto' }}>
         <div className="cg-card">
-          <h5 style={{ fontWeight: 800, color: '#1a237e', marginBottom: 20 }}>
+          <h5 style={{ fontWeight: 800, color: 'var(--text-primary)', marginBottom: 20 }}>
             <i className="bi bi-person-plus me-2" />Create Staff Account
           </h5>
 
@@ -47,13 +47,13 @@ const CreateStaff = () => {
                     key={r}
                     onClick={() => setForm({ ...form, role: r })}
                     style={{
-                      flex: 1, border: `2px solid ${form.role === r ? '#3949ab' : '#e0e0e0'}`,
+                      flex: 1, border: `2px solid ${form.role === r ? 'var(--violet)' : 'var(--glass-border)'}`,
                       borderRadius: 10, padding: '12px 16px', cursor: 'pointer',
-                      background: form.role === r ? '#e8eaf6' : '#fff', textAlign: 'center',
+                      background: form.role === r ? 'rgba(225,29,72,0.15)' : 'var(--bg-card)', textAlign: 'center',
                     }}
                   >
                     <div style={{ fontSize: 24, marginBottom: 4 }}>{r === 'proctor' ? '👮' : '🏛️'}</div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: form.role === r ? '#1a237e' : '#555', textTransform: 'capitalize' }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: form.role === r ? 'var(--violet-light)' : 'var(--text-secondary)', textTransform: 'capitalize' }}>
                       {r.replace('_', ' ')}
                     </div>
                   </div>
@@ -100,7 +100,7 @@ const CreateStaff = () => {
             </div>
 
             {/* Info box */}
-            <div style={{ background: '#e8eaf6', borderRadius: 8, padding: '12px 14px', marginBottom: 20, fontSize: 13, color: '#3949ab' }}>
+            <div style={{ background: 'rgba(22,163,74,0.08)', borderRadius: 8, padding: '12px 14px', marginBottom: 20, fontSize: 13, color: 'var(--cyan)', border: '1px solid rgba(22,163,74,0.2)' }}>
               <i className="bi bi-info-circle me-2" />
               A welcome email will be sent to the staff member with their login credentials.
             </div>

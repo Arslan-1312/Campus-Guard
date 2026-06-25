@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const validatePassword = require('../utils/passwordValidator');
 
 // @desc   Get all users (chief proctor only)
 // @route  GET /api/users
@@ -43,6 +44,11 @@ const createUser = asyncHandler(async (req, res) => {
 
   if (!name || !email || !password || !role) {
     return res.status(400).json({ success: false, message: 'Name, email, password, and role are required' });
+  }
+
+  const pwCheck = validatePassword(password);
+  if (!pwCheck.isValid) {
+    return res.status(400).json({ success: false, message: pwCheck.message });
   }
 
   const existing = await User.findOne({ email: email.toLowerCase() });
@@ -97,7 +103,11 @@ const updateUser = asyncHandler(async (req, res) => {
   if (semester !== undefined) user.semester = semester;
   if (phone !== undefined) user.phone = phone;
   if (typeof isActive === 'boolean') user.isActive = isActive;
-  if (password && password.length >= 6) {
+  if (password) {
+    const pwCheck = validatePassword(password);
+    if (!pwCheck.isValid) {
+      return res.status(400).json({ success: false, message: pwCheck.message });
+    }
     user.password = password; // pre-save hook will hash it
   }
 

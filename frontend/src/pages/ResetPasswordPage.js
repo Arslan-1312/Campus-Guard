@@ -47,7 +47,7 @@ const ResetPasswordPage = () => {
             {loading ? <><span className="spinner-border spinner-border-sm me-2" />Resetting...</> : 'Reset Password'}
           </button>
           <div className="text-center mt-3">
-            <Link to="/login" style={{ fontSize: 13, color: '#1a237e' }}><i className="bi bi-arrow-left me-1" />Back to Login</Link>
+            <Link to="/login" style={{ fontSize: 13, color: 'var(--violet)' }}><i className="bi bi-arrow-left me-1" />Back to Login</Link>
           </div>
         </form>
       </div>

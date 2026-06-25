@@ -36,9 +36,10 @@ export const PriorityBadge = ({ priority }) => {
 
 export const CategoryBadge = ({ category }) => (
   <span style={{
-    background: '#e8eaf6', color: '#3949ab',
+    background: 'rgba(225,29,72,0.1)', color: 'var(--violet-light)',
     borderRadius: 20, padding: '3px 10px', fontSize: 12, fontWeight: 500,
     textTransform: 'capitalize',
+    border: '1px solid rgba(225,29,72,0.2)',
   }}>
     {category?.replace('_', ' ')}
   </span>

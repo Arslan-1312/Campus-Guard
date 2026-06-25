@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const { generateToken, generateResetToken } = require('../utils/generateToken');
 const { sendEmail } = require('../utils/emailService');
+const validatePassword = require('../utils/passwordValidator');
 
 // @desc    Register user
 // @route   POST /api/auth/register
@@ -13,6 +14,11 @@ const register = asyncHandler(async (req, res) => {
   // Only allow student self-registration; proctors created by chief
   if (role && role !== 'student') {
     return res.status(403).json({ success: false, message: 'Students can only register as students' });
+  }
+
+  const pwCheck = validatePassword(password);
+  if (!pwCheck.isValid) {
+    return res.status(400).json({ success: false, message: pwCheck.message });
   }
 
   const exists = await User.findOne({ email });
@@ -145,6 +151,11 @@ const changePassword = asyncHandler(async (req, res) => {
     return res.status(400).json({ success: false, message: 'Current password is incorrect' });
   }
 
+  const pwCheck = validatePassword(newPassword);
+  if (!pwCheck.isValid) {
+    return res.status(400).json({ success: false, message: pwCheck.message });
+  }
+
   user.password = newPassword;
   await user.save();
 
@@ -181,6 +192,11 @@ const resetPassword = asyncHandler(async (req, res) => {
     const user = await User.findById(decoded.id);
     if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
+    const pwCheck = validatePassword(req.body.password);
+    if (!pwCheck.isValid) {
+      return res.status(400).json({ success: false, message: pwCheck.message });
+    }
+
     user.password = req.body.password;
     await user.save();
 
@@ -198,6 +214,11 @@ const createStaff = asyncHandler(async (req, res) => {
 
   if (!['proctor', 'chief_proctor'].includes(role)) {
     return res.status(400).json({ success: false, message: 'Role must be proctor or chief_proctor' });
+  }
+
+  const pwCheck = validatePassword(password);
+  if (!pwCheck.isValid) {
+    return res.status(400).json({ success: false, message: pwCheck.message });
   }
 
   const exists = await User.findOne({ email });

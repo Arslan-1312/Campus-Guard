@@ -33,8 +33,8 @@ const ForgotPasswordPage = () => {
         {sent ? (
           <div className="text-center">
             <div style={{ fontSize: 52, marginBottom: 16 }}>📧</div>
-            <h5 style={{ color: '#2e7d32' }}>Email Sent!</h5>
-            <p style={{ color: '#757575', fontSize: 14 }}>Check your inbox for password reset instructions. The link expires in 1 hour.</p>
+            <h5 style={{ color: 'var(--cyan)' }}>Email Sent!</h5>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Check your inbox for password reset instructions. The link expires in 1 hour.</p>
             <Link to="/login" className="btn btn-cg-primary mt-2" style={{ justifyContent: 'center' }}>Back to Login</Link>
           </div>
         ) : (
@@ -50,7 +50,7 @@ const ForgotPasswordPage = () => {
               {loading ? <><span className="spinner-border spinner-border-sm me-2" />Sending...</> : 'Send Reset Link'}
             </button>
             <div className="text-center mt-3">
-              <Link to="/login" style={{ fontSize: 13, color: '#1a237e' }}><i className="bi bi-arrow-left me-1" />Back to Login</Link>
+              <Link to="/login" style={{ fontSize: 13, color: 'var(--violet)' }}><i className="bi bi-arrow-left me-1" />Back to Login</Link>
             </div>
           </form>
         )}

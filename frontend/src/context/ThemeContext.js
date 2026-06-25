@@ -3,14 +3,18 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-  const [isDark, setIsDark] = useState(true); // Default to dark as per current design
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('cg_theme');
+    return saved ? saved === 'dark' : true; // default to dark
+  });
 
   useEffect(() => {
-    localStorage.setItem('cg_theme', 'dark');
-    document.documentElement.setAttribute('data-theme', 'dark');
-  }, []);
+    const theme = isDark ? 'dark' : 'light';
+    localStorage.setItem('cg_theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [isDark]);
 
-  const toggleTheme = () => {}; // No-op
+  const toggleTheme = () => setIsDark(prev => !prev);
 
   return (
     <ThemeContext.Provider value={{ isDark, toggleTheme }}>

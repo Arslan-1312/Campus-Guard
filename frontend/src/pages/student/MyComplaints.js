@@ -33,8 +33,8 @@ const MyComplaints = () => {
   return (
     <Layout title="My Complaints">
       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h5 style={{ fontWeight: 700, color: '#1a237e', margin: 0 }}>
-          My Complaints <span style={{ fontSize: 13, color: '#757575', fontWeight: 400 }}>({total} total)</span>
+        <h5 style={{ fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+          My Complaints <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 400 }}>({total} total)</span>
         </h5>
         <div className="d-flex gap-2">
           {complaints.length > 0 && (
@@ -50,7 +50,7 @@ const MyComplaints = () => {
 
       {/* Filters */}
       <div className="cg-card mb-3">
-        <div className="row g-2">
+        <div className="cg-filter-row row g-2">
           <div className="col-md-5">
             <input type="text" className="form-control form-control-sm" placeholder="🔍 Search complaints..."
               value={filters.search} onChange={(e) => setFilter('search', e.target.value)} />
@@ -86,7 +86,7 @@ const MyComplaints = () => {
         {loading ? (
           <div className="text-center py-5"><div className="spinner-border text-primary" /></div>
         ) : complaints.length === 0 ? (
-          <div className="text-center py-5" style={{ color: '#9e9e9e' }}>
+          <div className="text-center py-5" style={{ color: 'var(--text-muted)' }}>
             <i className="bi bi-inbox" style={{ fontSize: 40, display: 'block', marginBottom: 10 }} />
             <div>No complaints found.</div>
             <Link to="/student/submit" className="btn btn-sm btn-cg-primary mt-3">Submit Your First Complaint</Link>
@@ -109,7 +109,7 @@ const MyComplaints = () => {
                 <tbody>
                   {complaints.map((c) => (
                     <tr key={c._id}>
-                      <td data-label="Ref #"><span style={{ fontFamily: 'monospace', fontSize: 11, color: '#3949ab', whiteSpace: 'nowrap' }}>{c.referenceNumber}</span></td>
+                      <td data-label="Ref #"><span style={{ fontFamily: 'monospace', fontSize: 11, color: 'var(--violet-light)', whiteSpace: 'nowrap' }}>{c.referenceNumber}</span></td>
                       <td data-label="Title">
                         <div style={{ maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.title}</div>
                         {c.isAnonymous && <span style={{ fontSize: 10, color: '#e65100' }}><i className="bi bi-incognito me-1" />Anonymous</span>}
@@ -117,7 +117,7 @@ const MyComplaints = () => {
                       <td data-label="Category"><CategoryBadge category={c.category} /></td>
                       <td data-label="Priority"><PriorityBadge priority={c.priority} /></td>
                       <td data-label="Status"><StatusBadge status={c.status} /></td>
-                      <td data-label="Date" style={{ fontSize: 12, color: '#757575', whiteSpace: 'nowrap' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
+                      <td data-label="Date" style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
                       <td data-label="" style={{ whiteSpace: 'nowrap' }}>
                         <div className="d-flex gap-1">
                           <Link to={`/student/complaints/${c._id}`} className="btn btn-sm btn-outline-primary" style={{ borderRadius: 6, fontSize: 12 }}>
@@ -146,7 +146,7 @@ const MyComplaints = () => {
                   onClick={() => setFilters((f) => ({ ...f, page: f.page - 1 }))}>
                   <i className="bi bi-chevron-left" />
                 </button>
-                <span style={{ fontSize: 13, padding: '6px 12px', color: '#555' }}>
+                <span style={{ fontSize: 13, padding: '6px 12px', color: 'var(--text-secondary)' }}>
                   Page {filters.page} of {Math.ceil(total / 10)}
                 </span>
                 <button className="btn btn-sm btn-outline-secondary" disabled={filters.page >= Math.ceil(total / 10)}

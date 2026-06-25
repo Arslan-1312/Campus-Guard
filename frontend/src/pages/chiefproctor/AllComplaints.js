@@ -4,6 +4,7 @@ import Layout from '../../components/shared/Layout';
 import { StatusBadge, PriorityBadge, CategoryBadge } from '../../components/shared/StatusBadge';
 import api from '../../utils/api';
 import { downloadComplaintsCSV, downloadComplaint } from '../../utils/downloadComplaint';
+import toast from 'react-hot-toast';
 
 const AllComplaints = () => {
   const [complaints, setComplaints] = useState([]);
@@ -27,11 +28,23 @@ const AllComplaints = () => {
 
   const setFilter = (key, val) => setFilters((f) => ({ ...f, [key]: val, page: 1 }));
 
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this complaint? This action cannot be undone.')) return;
+    try {
+      await api.delete(`/complaints/${id}`);
+      toast.success('Complaint deleted successfully');
+      setComplaints((prev) => prev.filter((c) => c._id !== id));
+      setTotal((prev) => prev - 1);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete complaint');
+    }
+  };
+
   return (
     <Layout title="All Complaints">
       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h5 style={{ fontWeight: 700, color: '#1a237e', margin: 0 }}>
-          All Complaints <span style={{ fontSize: 13, color: '#757575', fontWeight: 400 }}>({total} total)</span>
+        <h5 style={{ fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+          All Complaints <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 400 }}>({total} total)</span>
         </h5>
         {complaints.length > 0 && (
           <button className="btn btn-outline-success btn-sm" onClick={() => downloadComplaintsCSV(complaints, 'all-complaints')}>
@@ -42,7 +55,7 @@ const AllComplaints = () => {
 
       {/* Filters */}
       <div className="cg-card mb-3">
-        <div className="row g-2">
+        <div className="cg-filter-row row g-2">
           <div className="col-md-4">
             <input type="text" className="form-control form-control-sm" placeholder="🔍 Search reference, title..."
               value={filters.search} onChange={(e) => setFilter('search', e.target.value)} />
@@ -89,7 +102,7 @@ const AllComplaints = () => {
         {loading ? (
           <div className="text-center py-5"><div className="spinner-border text-primary" /></div>
         ) : complaints.length === 0 ? (
-          <div className="text-center py-5" style={{ color: '#9e9e9e' }}>
+          <div className="text-center py-5" style={{ color: 'var(--text-muted)' }}>
             <i className="bi bi-inbox" style={{ fontSize: 40, display: 'block', marginBottom: 10 }} />
             No complaints found
           </div>
@@ -113,7 +126,7 @@ const AllComplaints = () => {
                 <tbody>
                   {complaints.map((c) => (
                     <tr key={c._id}>
-                      <td data-label="Ref #"><span style={{ fontFamily: 'monospace', fontSize: 11, color: '#3949ab', whiteSpace: 'nowrap' }}>{c.referenceNumber}</span></td>
+                      <td data-label="Ref #"><span style={{ fontFamily: 'monospace', fontSize: 11, color: 'var(--violet-light)', whiteSpace: 'nowrap' }}>{c.referenceNumber}</span></td>
                       <td data-label="Title" style={{ maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {c.title}
                         {c.isAnonymous && <span style={{ fontSize: 10, color: '#e65100', display: 'block' }}><i className="bi bi-incognito me-1" />Anon</span>}
@@ -124,7 +137,7 @@ const AllComplaints = () => {
                           ? <span style={{ color: '#e65100' }}>Anonymous</span>
                           : <div>
                               <div style={{ fontWeight: 600 }}>{c.submittedBy?.name || '—'}</div>
-                              <div style={{ fontSize: 11, color: '#9e9e9e' }}>{c.submittedBy?.rollNumber}</div>
+                              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{c.submittedBy?.rollNumber}</div>
                             </div>
                         }
                       </td>
@@ -132,17 +145,18 @@ const AllComplaints = () => {
                       <td data-label="Status"><StatusBadge status={c.status} /></td>
                       <td data-label="Assigned To" style={{ fontSize: 13 }}>
                         {c.assignedTo
-                          ? <span style={{ color: '#2e7d32' }}><i className="bi bi-person-check me-1" />{c.assignedTo.name}</span>
+                          ? <span style={{ color: 'var(--cyan)' }}><i className="bi bi-person-check me-1" />{c.assignedTo.name}</span>
                           : <span style={{ color: '#e65100', fontSize: 12 }}>Unassigned</span>
                         }
                       </td>
-                      <td data-label="Date" style={{ fontSize: 12, color: '#757575', whiteSpace: 'nowrap' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
+                      <td data-label="Date" style={{ fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
                       <td data-label="">
                         <div className="d-flex gap-1">
                           <Link to={`/chief/complaints/${c._id}`} className="btn btn-sm btn-outline-primary" style={{ borderRadius: 6, fontSize: 12, whiteSpace: 'nowrap' }}>
                             View
                           </Link>
                           <button className="btn btn-sm btn-outline-secondary" style={{ borderRadius: 6, fontSize: 12 }} title="Download" onClick={() => downloadComplaint(c)}><i className="bi bi-download" /></button>
+                          <button className="btn btn-sm btn-outline-danger" style={{ borderRadius: 6, fontSize: 12 }} title="Delete" onClick={() => handleDelete(c._id)}><i className="bi bi-trash" /></button>
                         </div>
                       </td>
                     </tr>
@@ -154,7 +168,7 @@ const AllComplaints = () => {
             {/* Pagination */}
             {total > 15 && (
               <div className="d-flex justify-content-between align-items-center mt-3">
-                <span style={{ fontSize: 13, color: '#757575' }}>
+                <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>
                   Showing {((filters.page - 1) * 15) + 1}–{Math.min(filters.page * 15, total)} of {total}
                 </span>
                 <div className="d-flex gap-2">
@@ -162,7 +176,7 @@ const AllComplaints = () => {
                     onClick={() => setFilters((f) => ({ ...f, page: f.page - 1 }))}>
                     <i className="bi bi-chevron-left" />
                   </button>
-                  <span style={{ fontSize: 13, padding: '6px 12px', color: '#555' }}>
+                  <span style={{ fontSize: 13, padding: '6px 12px', color: 'var(--text-secondary)' }}>
                     {filters.page} / {Math.ceil(total / 15)}
                   </span>
                   <button className="btn btn-sm btn-outline-secondary" disabled={filters.page >= Math.ceil(total / 15)}

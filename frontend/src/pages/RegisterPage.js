@@ -53,10 +53,10 @@ const RegisterPage = () => {
             <React.Fragment key={s}>
               <div style={{
                 width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: step >= s ? '#1a237e' : '#e0e0e0',
-                color: step >= s ? '#fff' : '#999', fontWeight: 700, fontSize: 13,
+                background: step >= s ? 'var(--violet)' : 'var(--glass-border)',
+                color: step >= s ? '#fff' : 'var(--text-secondary)', fontWeight: 700, fontSize: 13,
               }}>{s}</div>
-              {s === 1 && <div style={{ flex: 1, height: 2, background: step > 1 ? '#1a237e' : '#e0e0e0', maxWidth: 40 }} />}
+              {s === 1 && <div style={{ flex: 1, height: 2, background: step > 1 ? 'var(--violet)' : 'var(--glass-border)', maxWidth: 40 }} />}
             </React.Fragment>
           ))}
         </div>
@@ -126,8 +126,8 @@ const RegisterPage = () => {
         )}
 
         <div className="text-center mt-3">
-          <span style={{ fontSize: 13, color: '#757575' }}>Already have an account? </span>
-          <Link to="/login" style={{ fontSize: 13, color: '#1a237e', fontWeight: 600 }}>Sign in</Link>
+          <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Already have an account? </span>
+          <Link to="/login" style={{ fontSize: 13, color: 'var(--violet)', fontWeight: 600 }}>Sign in</Link>
         </div>
       </div>
     </div>

@@ -28,8 +28,8 @@ const AssignedComplaints = () => {
   return (
     <Layout title="Assigned Complaints">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h5 style={{ fontWeight: 700, color: '#1a237e', margin: 0 }}>
-          Assigned to Me <span style={{ fontSize: 13, color: '#757575', fontWeight: 400 }}>({total})</span>
+        <h5 style={{ fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+          Assigned to Me <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 400 }}>({total})</span>
         </h5>
         {complaints.length > 0 && (
           <button className="btn btn-outline-success btn-sm" onClick={() => downloadComplaintsCSV(complaints, 'assigned-complaints')}>
@@ -39,7 +39,7 @@ const AssignedComplaints = () => {
       </div>
 
       <div className="cg-card mb-3">
-        <div className="row g-2">
+        <div className="cg-filter-row row g-2">
           <div className="col-md-6">
             <input type="text" className="form-control form-control-sm" placeholder="🔍 Search..."
               value={filters.search} onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value, page: 1 }))} />
@@ -63,7 +63,7 @@ const AssignedComplaints = () => {
       <div className="cg-card">
         {loading ? <div className="text-center py-5"><div className="spinner-border text-primary" /></div>
           : complaints.length === 0 ? (
-            <div className="text-center py-5" style={{ color: '#9e9e9e' }}>
+            <div className="text-center py-5" style={{ color: 'var(--text-muted)' }}>
               <i className="bi bi-clipboard-x" style={{ fontSize: 40, display: 'block', marginBottom: 10 }} />
               No complaints assigned to you yet
             </div>
@@ -76,7 +76,7 @@ const AssignedComplaints = () => {
                 <tbody>
                   {complaints.map((c) => (
                     <tr key={c._id}>
-                      <td data-label="Ref #"><span style={{ fontFamily: 'monospace', fontSize: 11, color: '#3949ab' }}>{c.referenceNumber}</span></td>
+                      <td data-label="Ref #"><span style={{ fontFamily: 'monospace', fontSize: 11, color: 'var(--violet-light)' }}>{c.referenceNumber}</span></td>
                       <td data-label="Title" style={{ maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{c.title}</td>
                       <td data-label="Category"><CategoryBadge category={c.category} /></td>
                       <td data-label="Student" style={{ fontSize: 13 }}>
@@ -84,7 +84,7 @@ const AssignedComplaints = () => {
                       </td>
                       <td data-label="Priority"><PriorityBadge priority={c.priority} /></td>
                       <td data-label="Status"><StatusBadge status={c.status} /></td>
-                      <td data-label="Date" style={{ fontSize: 12, color: '#757575' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
+                      <td data-label="Date" style={{ fontSize: 12, color: 'var(--text-muted)' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
                       <td data-label=""><div className="d-flex gap-1"><Link to={`/proctor/complaints/${c._id}`} className="btn btn-sm btn-outline-success" style={{ borderRadius: 6, fontSize: 12 }}>Manage</Link><button className="btn btn-sm btn-outline-secondary" style={{ borderRadius: 6, fontSize: 12 }} title="Download" onClick={() => downloadComplaint(c)}><i className="bi bi-download" /></button></div></td>
                     </tr>
                   ))}

@@ -58,7 +58,7 @@ const LoginPage = () => {
           <div className="mb-4">
             <div className="d-flex justify-content-between align-items-center mb-1">
               <label className="form-label fw-semibold mb-0" style={{ fontSize: 14 }}>Password</label>
-              <Link to="/forgot-password" style={{ fontSize: 12, color: '#3949ab' }}>Forgot password?</Link>
+              <Link to="/forgot-password" style={{ fontSize: 12, color: 'var(--violet-light)' }}>Forgot password?</Link>
             </div>
             <div className="input-group">
               <span className="input-group-text"><i className="bi bi-lock" /></span>
@@ -84,19 +84,19 @@ const LoginPage = () => {
         </form>
 
         <div className="text-center mt-3">
-          <span style={{ fontSize: 13, color: '#757575' }}>Don't have an account? </span>
-          <Link to="/register" style={{ fontSize: 13, color: '#1a237e', fontWeight: 600 }}>Register here</Link>
+          <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Don't have an account? </span>
+          <Link to="/register" style={{ fontSize: 13, color: 'var(--violet)', fontWeight: 600 }}>Register here</Link>
         </div>
 
         <div className="text-center mt-3">
-          <Link to="/track" style={{ fontSize: 12, color: '#757575' }}>
+          <Link to="/track" style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
             <i className="bi bi-search me-1" />Track anonymous complaint
           </Link>
         </div>
 
         {/* Demo accounts */}
-        <div style={{ marginTop: 20, padding: 14, background: '#f5f6fa', borderRadius: 8, fontSize: 12, color: '#555' }}>
-          <div style={{ fontWeight: 700, marginBottom: 6, color: '#1a237e' }}>Demo Accounts</div>
+        <div style={{ marginTop: 20, padding: 14, background: 'rgba(255,255,255,0.02)', border: '1px solid var(--glass-border)', borderRadius: 8, fontSize: 12, color: 'var(--text-secondary)' }}>
+          <div style={{ fontWeight: 700, marginBottom: 6, color: 'var(--violet-light)' }}>Demo Accounts</div>
           <div>👨‍🎓 Student: 302-221045 / password123</div>
           <div>👮 Proctor: proctor@hu.edu.pk / password123</div>
           <div>🏛️ Chief: chief@hu.edu.pk / password123</div>

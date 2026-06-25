@@ -28,4 +28,23 @@ api.interceptors.response.use(
   }
 );
 
+export const getEvidenceUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    if (url.includes('cloudinary.com')) return url;
+    const uploadsIndex = url.indexOf('/uploads/');
+    if (uploadsIndex !== -1) {
+      const relativePath = url.substring(uploadsIndex);
+      const apiURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      const origin = apiURL.replace(/\/api\/?$/, '');
+      return `${origin}${relativePath}`;
+    }
+    return url;
+  }
+  const apiURL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+  const origin = apiURL.replace(/\/api\/?$/, '');
+  return `${origin}${url.startsWith('/') ? '' : '/'}${url}`;
+};
+
 export default api;
+

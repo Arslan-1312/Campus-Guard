@@ -39,18 +39,40 @@ export const SocketProvider = ({ children }) => {
     s.on('new_notification', (notification) => {
       setNotifications((prev) => [notification, ...prev]);
       setUnreadCount((c) => c + 1);
-      toast(notification.message, {
-        icon: '🔔',
-        style: {
-          background: 'rgba(124,58,237,0.9)',
-          color: '#fff',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(255,255,255,0.15)',
-          borderRadius: 12,
-        },
-        duration: 4000,
-      });
+
+      toast.custom(
+        (t) => (
+          <div className={`cg-toast ${t.visible ? 'animate-enter' : 'animate-leave'}`}>
+            {/* Bell icon */}
+            <div className="cg-toast-icon">🔔</div>
+
+            {/* Content */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="cg-toast-title">
+                {notification.title || 'New Notification'}
+              </div>
+              <div className="cg-toast-msg">
+                {notification.message}
+              </div>
+              <div className="cg-toast-time">
+                {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </div>
+            </div>
+
+            {/* Close */}
+            <button
+              className="cg-toast-close"
+              onClick={() => toast.dismiss(t.id)}
+              title="Dismiss"
+            >
+              ✕
+            </button>
+          </div>
+        ),
+        { duration: 5000, position: 'top-right' }
+      );
     });
+
 
     s.on('disconnect', () => console.log('Socket disconnected'));
 

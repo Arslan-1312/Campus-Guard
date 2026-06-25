@@ -32,14 +32,12 @@ const ManageUsers = () => {
     } catch { toast.error('Action failed'); }
   };
 
-  const roleColor = { student: '#1565c0', proctor: '#2e7d32', chief_proctor: '#6a1b9a' };
-  const roleBg = { student: '#e3f2fd', proctor: '#e8f5e9', chief_proctor: '#f3e5f5' };
 
   return (
     <Layout title="Manage Users">
       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h5 style={{ fontWeight: 700, color: '#1a237e', margin: 0 }}>
-          All Users <span style={{ fontSize: 13, color: '#757575', fontWeight: 400 }}>({total})</span>
+        <h5 style={{ fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+          All Users <span style={{ fontSize: 13, color: 'var(--text-secondary)', fontWeight: 400 }}>({total})</span>
         </h5>
         <Link to="/chief/create-staff" className="btn btn-cg-primary btn-sm">
           <i className="bi bi-person-plus me-1" />Add Staff
@@ -48,7 +46,7 @@ const ManageUsers = () => {
 
       {/* Filters */}
       <div className="cg-card mb-3">
-        <div className="row g-2">
+        <div className="cg-filter-row row g-2">
           <div className="col-md-6">
             <input type="text" className="form-control form-control-sm" placeholder="🔍 Search name, email, roll number..."
               value={filters.search} onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value, page: 1 }))} />
@@ -73,7 +71,7 @@ const ManageUsers = () => {
         {loading ? (
           <div className="text-center py-5"><div className="spinner-border text-primary" /></div>
         ) : users.length === 0 ? (
-          <div className="text-center py-5" style={{ color: '#9e9e9e' }}>
+          <div className="text-center py-5" style={{ color: 'var(--text-muted)' }}>
             <i className="bi bi-people" style={{ fontSize: 40, display: 'block', marginBottom: 10 }} />
             No users found
           </div>
@@ -89,7 +87,7 @@ const ManageUsers = () => {
                     <tr key={u._id}>
                       <td data-label="Name">
                         <div className="d-flex align-items-center gap-2">
-                          <div style={{ width: 32, height: 32, borderRadius: '50%', background: roleBg[u.role], display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: roleColor[u.role], fontSize: 13, flexShrink: 0 }}>
+                          <div className={`cg-avatar-badge avatar-${u.role}`} style={{ width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>
                             {u.name?.charAt(0).toUpperCase()}
                           </div>
                           <div>
@@ -98,24 +96,20 @@ const ManageUsers = () => {
                           </div>
                         </div>
                       </td>
-                      <td data-label="Email" style={{ fontSize: 13, color: '#555' }}>{u.email}</td>
+                      <td data-label="Email" style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{u.email}</td>
                       <td data-label="Role">
-                        <span style={{ background: roleBg[u.role], color: roleColor[u.role], borderRadius: 20, padding: '3px 10px', fontSize: 11, fontWeight: 600, textTransform: 'capitalize' }}>
+                        <span className={`cg-role-badge ${u.role}`}>
                           {u.role?.replace('_', ' ')}
                         </span>
                       </td>
-                      <td data-label="Department" style={{ fontSize: 13, color: '#555' }}>{u.department || '—'}</td>
+                      <td data-label="Department" style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{u.department || '—'}</td>
                       <td data-label="Roll No." style={{ fontFamily: 'monospace', fontSize: 12 }}>{u.rollNumber || '—'}</td>
                       <td data-label="Status">
-                        <span style={{
-                          background: u.isActive ? '#e8f5e9' : '#ffebee',
-                          color: u.isActive ? '#2e7d32' : '#c62828',
-                          borderRadius: 20, padding: '3px 10px', fontSize: 11, fontWeight: 600,
-                        }}>
+                        <span className={`cg-status-badge ${u.isActive ? 'active' : 'inactive'}`}>
                           {u.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </td>
-                      <td data-label="Joined" style={{ fontSize: 12, color: '#757575' }}>{new Date(u.createdAt).toLocaleDateString()}</td>
+                      <td data-label="Joined" style={{ fontSize: 12, color: 'var(--text-muted)' }}>{new Date(u.createdAt).toLocaleDateString()}</td>
                       <td data-label="">
                         <button
                           className={`btn btn-sm ${u.isActive ? 'btn-outline-danger' : 'btn-outline-success'}`}

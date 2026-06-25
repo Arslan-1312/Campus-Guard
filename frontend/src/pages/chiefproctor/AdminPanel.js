@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import Layout from '../../components/shared/Layout';
+import { StatusBadge, PriorityBadge } from '../../components/shared/StatusBadge';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
 
@@ -12,10 +14,10 @@ const Modal = ({ show, title, onClose, children }) => {
   if (!show) return null;
   return (
     <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.75)', zIndex:9000, display:'flex', alignItems:'center', justifyContent:'center', padding:16, backdropFilter:'blur(4px)' }} onClick={onClose}>
-      <div style={{ background:'#1a1040', border:'1px solid rgba(255,255,255,0.12)', borderRadius:20, width:'100%', maxWidth:540, boxShadow:'0 24px 64px rgba(0,0,0,0.5)', maxHeight:'90vh', overflowY:'auto' }} onClick={e => e.stopPropagation()}>
-        <div style={{ padding:'20px 24px', borderBottom:'1px solid rgba(255,255,255,0.08)', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-          <h5 style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, color:'#f1f5f9', fontSize:17 }}>{title}</h5>
-          <button onClick={onClose} style={{ background:'none', border:'none', color:'#94a3b8', fontSize:20, cursor:'pointer' }}>✕</button>
+      <div style={{ background:'var(--bg-surface)', border:'1px solid var(--glass-border)', borderRadius:20, width:'100%', maxWidth:540, boxShadow:'0 24px 64px rgba(0,0,0,0.5)', maxHeight:'90vh', overflowY:'auto' }} onClick={e => e.stopPropagation()}>
+        <div style={{ padding:'20px 24px', borderBottom:'1px solid var(--glass-border)', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+          <h5 style={{ margin:0, fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, color:'var(--text-primary)', fontSize:17 }}>{title}</h5>
+          <button onClick={onClose} style={{ background:'none', border:'none', color:'var(--text-secondary)', fontSize:20, cursor:'pointer' }}>✕</button>
         </div>
         <div style={{ padding:'24px' }}>{children}</div>
       </div>
@@ -27,10 +29,10 @@ const ConfirmModal = ({ show, message, onConfirm, onCancel }) => {
   if (!show) return null;
   return (
     <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.8)', zIndex:9100, display:'flex', alignItems:'center', justifyContent:'center', padding:16, backdropFilter:'blur(4px)' }}>
-      <div style={{ background:'#1a1040', border:'1px solid rgba(244,63,94,0.3)', borderRadius:16, width:'100%', maxWidth:400, padding:32, boxShadow:'0 24px 48px rgba(0,0,0,0.5)' }}>
+      <div style={{ background:'var(--bg-surface)', border:'1px solid rgba(244,63,94,0.3)', borderRadius:16, width:'100%', maxWidth:400, padding:32, boxShadow:'0 24px 48px rgba(0,0,0,0.5)' }}>
         <div style={{ fontSize:44, textAlign:'center', marginBottom:16 }}>⚠️</div>
-        <h6 style={{ textAlign:'center', color:'#f1f5f9', fontWeight:700, marginBottom:8 }}>Confirm Delete</h6>
-        <p style={{ textAlign:'center', color:'#94a3b8', fontSize:14, marginBottom:24 }}>{message}</p>
+        <h6 style={{ textAlign:'center', color:'var(--text-primary)', fontWeight:700, marginBottom:8 }}>Confirm Delete</h6>
+        <p style={{ textAlign:'center', color:'var(--text-secondary)', fontSize:14, marginBottom:24 }}>{message}</p>
         <div style={{ display:'flex', gap:12 }}>
           <button onClick={onCancel} className="btn btn-outline-secondary w-100" style={{ borderRadius:10 }}>Cancel</button>
           <button onClick={onConfirm} style={{ flex:1, background:'linear-gradient(135deg,#f43f5e,#fb923c)', border:'none', borderRadius:10, color:'#fff', fontWeight:700, cursor:'pointer', padding:'10px 0' }}>Delete</button>
@@ -42,7 +44,7 @@ const ConfirmModal = ({ show, message, onConfirm, onCancel }) => {
 
 const FormField = ({ label, name, value, onChange, type='text', placeholder='', required=false, options=null }) => (
   <div style={{ marginBottom:14 }}>
-    <label style={{ display:'block', color:'#94a3b8', fontSize:12, fontWeight:600, marginBottom:5, textTransform:'uppercase', letterSpacing:'0.5px' }}>
+    <label style={{ display:'block', color:'var(--text-secondary)', fontSize:12, fontWeight:600, marginBottom:5, textTransform:'uppercase', letterSpacing:'0.5px' }}>
       {label}{required && <span style={{ color:'#f43f5e', marginLeft:3 }}>*</span>}
     </label>
     {options ? (
@@ -55,10 +57,10 @@ const FormField = ({ label, name, value, onChange, type='text', placeholder='', 
   </div>
 );
 
-const roleBadge = {
-  student:       { bg:'rgba(6,182,212,0.15)',   color:'#22d3ee',  label:'Student' },
-  proctor:       { bg:'rgba(16,185,129,0.15)',  color:'#34d399',  label:'Proctor' },
-  chief_proctor: { bg:'rgba(124,58,237,0.15)',  color:'#a78bfa',  label:'Chief Proctor' },
+const roleLabels = {
+  student:       'Student',
+  proctor:       'Proctor',
+  chief_proctor: 'Chief Proctor',
 };
 
 const AdminPanel = () => {
@@ -70,6 +72,7 @@ const AdminPanel = () => {
   const [page, setPage]         = useState(1);
   const LIMIT = 15;
 
+  const [complaints, setComplaints]   = useState([]);
   const [showModal, setShowModal]     = useState(false);
   const [editUser, setEditUser]       = useState(null);   // null = create mode
   const [form, setForm]               = useState(defaultForm);
@@ -89,7 +92,37 @@ const AdminPanel = () => {
     finally { setLoading(false); }
   }, [tab, page, search]);
 
-  useEffect(() => { fetchUsers(); }, [fetchUsers]);
+  const fetchComplaints = useCallback(async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({ limit: LIMIT, page });
+      if (search) params.set('search', search);
+      const { data } = await api.get(`/complaints?${params}`);
+      setComplaints(data.complaints || []);
+      setTotal(data.total || 0);
+    } catch { toast.error('Failed to load complaint history'); }
+    finally { setLoading(false); }
+  }, [page, search]);
+
+  const handleDeleteComplaint = async (complaintId) => {
+    if (!window.confirm('Are you sure you want to delete this complaint? This action cannot be undone.')) return;
+    try {
+      await api.delete(`/complaints/${complaintId}`);
+      toast.success('Complaint deleted successfully');
+      fetchComplaints();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Delete failed');
+    }
+  };
+
+  useEffect(() => {
+    if (tab === 'complaint_history') {
+      fetchComplaints();
+    } else {
+      fetchUsers();
+    }
+  }, [tab, page, search, fetchUsers, fetchComplaints]);
+
   useEffect(() => { setPage(1); }, [tab, search]);
 
   const openCreate = () => {
@@ -150,6 +183,7 @@ const AdminPanel = () => {
     { key:'student',       label:'👨‍🎓 Students',       count: tab==='student' ? total : '' },
     { key:'proctor',       label:'👮 Proctors',         count: tab==='proctor' ? total : '' },
     { key:'chief_proctor', label:'🏛️ Chief Proctors',   count: tab==='chief_proctor' ? total : '' },
+    { key:'complaint_history', label:'📜 Complaint History', count: tab==='complaint_history' ? total : '' },
   ];
 
   return (
@@ -214,10 +248,10 @@ const AdminPanel = () => {
       {/* Header */}
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24, flexWrap:'wrap', gap:12 }}>
         <div>
-          <h4 style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:800, color:'#f1f5f9', margin:0 }}>
+          <h4 style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:800, color:'var(--text-primary)', margin:0 }}>
             🗄️ MongoDB Admin Panel
           </h4>
-          <p style={{ color:'#94a3b8', fontSize:13, marginTop:4, marginBottom:0 }}>
+          <p style={{ color:'var(--text-secondary)', fontSize:13, marginTop:4, marginBottom:0 }}>
             Add, edit, and remove users directly in the database
           </p>
         </div>
@@ -227,19 +261,20 @@ const AdminPanel = () => {
       </div>
 
       {/* Tabs */}
-      <div style={{ display:'flex', gap:8, marginBottom:20, flexWrap:'wrap' }}>
+      <div className="cg-admin-tabs" style={{ display:'flex', gap:8, marginBottom:20, flexWrap:'wrap' }}>
         {tabs.map(t => (
           <button key={t.key} onClick={() => setTab(t.key)} style={{
             padding:'10px 20px', borderRadius:10, border:'1px solid',
-            borderColor: tab === t.key ? 'rgba(124,58,237,0.5)' : 'rgba(255,255,255,0.08)',
-            background: tab === t.key ? 'rgba(124,58,237,0.2)' : 'rgba(255,255,255,0.04)',
-            color: tab === t.key ? '#a78bfa' : '#94a3b8',
+            borderColor: tab === t.key ? 'rgba(225,29,72,0.5)' : 'var(--glass-border)',
+            background: tab === t.key ? 'rgba(225,29,72,0.2)' : 'var(--bg-card)',
+            color: tab === t.key ? '#fb7185' : 'var(--text-secondary)',
             fontWeight:600, fontSize:13, cursor:'pointer', transition:'all 0.2s',
           }}>
             {t.label} {t.count !== '' && <span style={{ marginLeft:6, opacity:0.7 }}>({t.count})</span>}
           </button>
         ))}
       </div>
+
 
       {/* Search */}
       <div className="cg-card" style={{ marginBottom:16, padding:'14px 18px' }}>
@@ -259,6 +294,71 @@ const AdminPanel = () => {
           <div style={{ padding:32 }}>
             {[1,2,3,4,5].map(i => <div key={i} className="skeleton skeleton-row" />)}
           </div>
+        ) : tab === 'complaint_history' ? (
+          complaints.length === 0 ? (
+            <div style={{ textAlign:'center', padding:'56px 0', color:'#475569' }}>
+              <div style={{ fontSize:48, marginBottom:12 }}>📜</div>
+              <div style={{ fontSize:15, fontWeight:600, color:'#94a3b8', marginBottom:6 }}>No complaints found</div>
+              <div style={{ fontSize:13 }}>No complaints are recorded yet</div>
+            </div>
+          ) : (
+            <>
+              <div className="cg-table-mobile-wrap table-responsive">
+                <table className="cg-table">
+                  <thead>
+                    <tr>
+                      <th>Ref #</th><th>Title</th><th>Category</th><th>Student</th><th>Priority</th><th>Status</th><th>Date</th><th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {complaints.map(c => (
+                      <tr key={c._id}>
+                        <td data-label="Ref #"><span style={{ fontFamily:'monospace', fontSize:12, color:'#fb7185', fontWeight:700 }}>{c.referenceNumber}</span></td>
+                        <td data-label="Title" style={{ maxWidth:150, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', color:'var(--text-primary)', fontSize:13 }}>
+                          {c.title}
+                          {c.isAnonymous && <span style={{ fontSize: 10, color: '#e65100', display: 'block' }}><i className="bi bi-incognito me-1" />Anon</span>}
+                        </td>
+                        <td data-label="Category" style={{ textTransform:'capitalize', fontSize:13 }}>{c.category}</td>
+                        <td data-label="Student" style={{ fontSize:13 }}>
+                          {c.isAnonymous ? (
+                            <span style={{ color: '#e65100' }}>Anonymous</span>
+                          ) : (
+                            <span>{c.submittedBy?.name || '—'}</span>
+                          )}
+                        </td>
+                        <td data-label="Priority"><PriorityBadge priority={c.priority} /></td>
+                        <td data-label="Status"><StatusBadge status={c.status} /></td>
+                        <td data-label="Date" style={{ fontSize:12, color:'#757575' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
+                        <td data-label="">
+                          <div style={{ display:'flex', gap:6 }}>
+                            <Link to={`/chief/complaints/${c._id}`} className="btn btn-outline-primary btn-sm" style={{ borderRadius:8, fontSize:12, padding:'4px 12px' }}>
+                              View
+                            </Link>
+                            <button onClick={() => handleDeleteComplaint(c._id)} className="btn btn-outline-danger btn-sm" style={{ borderRadius:8, fontSize:12, padding:'4px 10px' }}>
+                              <i className="bi bi-trash" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              
+              {/* Pagination */}
+              {pages > 1 && (
+                <div style={{ display:'flex', justifyContent:'center', gap:8, padding:'16px 0', borderTop:'1px solid var(--glass-border)' }}>
+                  <button className="btn btn-outline-secondary btn-sm" disabled={page <= 1} onClick={() => setPage(p => p - 1)} style={{ borderRadius:8 }}>
+                    <i className="bi bi-chevron-left" />
+                  </button>
+                  <span style={{ fontSize:13, color:'var(--text-secondary)', padding:'6px 16px' }}>Page {page} of {pages}</span>
+                  <button className="btn btn-outline-secondary btn-sm" disabled={page >= pages} onClick={() => setPage(p => p + 1)} style={{ borderRadius:8 }}>
+                    <i className="bi bi-chevron-right" />
+                  </button>
+                </div>
+              )}
+            </>
+          )
         ) : users.length === 0 ? (
           <div style={{ textAlign:'center', padding:'56px 0', color:'#475569' }}>
             <div style={{ fontSize:48, marginBottom:12 }}>👤</div>
@@ -277,30 +377,30 @@ const AdminPanel = () => {
                 </thead>
                 <tbody>
                   {users.map(u => {
-                    const rb = roleBadge[u.role] || roleBadge.student;
+                    const label = roleLabels[u.role] || u.role;
                     return (
                       <tr key={u._id}>
                         <td data-label="Name">
                           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                            <div style={{ width:34, height:34, borderRadius:'50%', background: rb.bg, border:`1px solid ${rb.color}33`, display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, color:rb.color, fontSize:13, flexShrink:0 }}>
+                            <div className={`cg-avatar-badge avatar-${u.role}`} style={{ width:34, height:34, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontWeight:700, fontSize:13, flexShrink:0 }}>
                               {u.name?.charAt(0).toUpperCase()}
                             </div>
                             <div>
-                              <div style={{ fontWeight:600, color:'#f1f5f9', fontSize:13 }}>{u.name}</div>
+                              <div style={{ fontWeight:600, color:'var(--text-primary)', fontSize:13 }}>{u.name}</div>
                               {u.isOnline && <span style={{ fontSize:10, color:'#34d399' }}>● Online</span>}
                             </div>
                           </div>
                         </td>
-                        <td data-label="Email" style={{ fontSize:12, color:'#64748b' }}>{u.email}</td>
+                        <td data-label="Email" style={{ fontSize:12, color:'var(--text-muted)' }}>{u.email}</td>
                         <td data-label="Role">
-                          <span style={{ background:rb.bg, color:rb.color, border:`1px solid ${rb.color}33`, borderRadius:20, padding:'3px 10px', fontSize:11, fontWeight:600 }}>
-                            {rb.label}
+                          <span className={`cg-role-badge ${u.role}`}>
+                            {label}
                           </span>
                         </td>
-                        <td data-label="Dept" style={{ fontSize:12, color:'#94a3b8' }}>{u.department || '—'}</td>
-                        <td data-label="Roll No." style={{ fontFamily:'monospace', fontSize:12, color:'#94a3b8' }}>{u.rollNumber || '—'}</td>
+                        <td data-label="Dept" style={{ fontSize:12, color:'var(--text-secondary)' }}>{u.department || '—'}</td>
+                        <td data-label="Roll No." style={{ fontFamily:'monospace', fontSize:12, color:'var(--text-secondary)' }}>{u.rollNumber || '—'}</td>
                         <td data-label="Status">
-                          <span style={{ background: u.isActive ? 'rgba(16,185,129,0.15)' : 'rgba(244,63,94,0.15)', color: u.isActive ? '#34d399' : '#fb7185', borderRadius:20, padding:'3px 10px', fontSize:11, fontWeight:600 }}>
+                          <span className={`cg-status-badge ${u.isActive ? 'active' : 'inactive'}`}>
                             {u.isActive ? 'Active' : 'Inactive'}
                           </span>
                         </td>
@@ -324,11 +424,11 @@ const AdminPanel = () => {
 
             {/* Pagination */}
             {pages > 1 && (
-              <div style={{ display:'flex', justifyContent:'center', gap:8, padding:'16px 0', borderTop:'1px solid rgba(255,255,255,0.04)' }}>
+              <div style={{ display:'flex', justifyContent:'center', gap:8, padding:'16px 0', borderTop:'1px solid var(--glass-border)' }}>
                 <button className="btn btn-outline-secondary btn-sm" disabled={page <= 1} onClick={() => setPage(p => p - 1)} style={{ borderRadius:8 }}>
                   <i className="bi bi-chevron-left" />
                 </button>
-                <span style={{ fontSize:13, color:'#94a3b8', padding:'6px 16px' }}>Page {page} of {pages}</span>
+                <span style={{ fontSize:13, color:'var(--text-secondary)', padding:'6px 16px' }}>Page {page} of {pages}</span>
                 <button className="btn btn-outline-secondary btn-sm" disabled={page >= pages} onClick={() => setPage(p => p + 1)} style={{ borderRadius:8 }}>
                   <i className="bi bi-chevron-right" />
                 </button>

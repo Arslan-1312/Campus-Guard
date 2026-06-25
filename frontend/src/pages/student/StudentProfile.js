@@ -52,19 +52,19 @@ const StudentProfile = () => {
       <div style={{ maxWidth: 640, margin: '0 auto' }}>
         {/* Avatar card */}
         <div className="cg-card mb-4 text-center">
-          <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'linear-gradient(135deg, #1a237e, #3949ab)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: '#fff', fontWeight: 800, margin: '0 auto 12px' }}>
+          <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'linear-gradient(135deg, #e11d48, #dc2626)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, color: '#fff', fontWeight: 800, margin: '0 auto 12px' }}>
             {user?.name?.charAt(0).toUpperCase()}
           </div>
-          <h5 style={{ fontWeight: 800, color: '#1a237e', margin: 0 }}>{user?.name}</h5>
-          <div style={{ color: '#757575', fontSize: 14 }}>{user?.email}</div>
-          <span style={{ background: '#e8eaf6', color: '#3949ab', borderRadius: 20, padding: '3px 12px', fontSize: 12, fontWeight: 600, display: 'inline-block', marginTop: 6 }}>
+          <h5 style={{ fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>{user?.name}</h5>
+          <div style={{ color: 'var(--text-secondary)', fontSize: 14 }}>{user?.email}</div>
+          <span style={{ background: 'rgba(225,29,72,0.15)', color: '#fb7185', borderRadius: 20, padding: '3px 12px', fontSize: 12, fontWeight: 600, display: 'inline-block', marginTop: 6, border: '1px solid rgba(225,29,72,0.3)' }}>
             Student
           </span>
         </div>
 
         {/* Profile form */}
         <div className="cg-card mb-4">
-          <h6 style={{ fontWeight: 700, color: '#1a237e', marginBottom: 16 }}>Personal Information</h6>
+          <h6 style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16 }}>Personal Information</h6>
           <form onSubmit={handleProfileSave}>
             <div className="row g-3">
               <div className="col-12">
@@ -102,7 +102,7 @@ const StudentProfile = () => {
 
         {/* Password */}
         <div className="cg-card">
-          <h6 style={{ fontWeight: 700, color: '#1a237e', marginBottom: 16 }}>Change Password</h6>
+          <h6 style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16 }}>Change Password</h6>
           <form onSubmit={handlePasswordChange}>
             <div className="mb-3">
               <label className="form-label fw-semibold" style={{ fontSize: 13 }}>Current Password</label>

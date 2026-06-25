@@ -5,7 +5,7 @@ import { StatusBadge, PriorityBadge, CategoryBadge } from '../../components/shar
 import { useSocket } from '../../context/SocketContext';
 import { useAuth } from '../../context/AuthContext';
 import ChatPanel from '../../components/shared/ChatPanel';
-import api from '../../utils/api';
+import api, { getEvidenceUrl } from '../../utils/api';
 import toast from 'react-hot-toast';
 import { downloadComplaint } from '../../utils/downloadComplaint';
 
@@ -119,13 +119,13 @@ const ComplaintDetail = () => {
         {/* Main card */}
         <div className="cg-card mb-3">
           <div className="d-flex justify-content-between flex-wrap gap-2 mb-3">
-            <span style={{ fontFamily: 'monospace', fontSize: 13, color: '#3949ab', fontWeight: 700 }}>
+            <span style={{ fontFamily: 'monospace', fontSize: 13, color: 'var(--violet-light)', fontWeight: 700 }}>
               {complaint.referenceNumber}
             </span>
             <StatusBadge status={complaint.status} />
           </div>
 
-          <h4 style={{ fontWeight: 800, color: '#1a237e', marginBottom: 8 }}>{complaint.title}</h4>
+          <h4 style={{ fontWeight: 800, color: 'var(--text-primary)', marginBottom: 8 }}>{complaint.title}</h4>
 
           <div className="d-flex flex-wrap gap-2 mb-3">
             <CategoryBadge category={complaint.category} />
@@ -137,9 +137,9 @@ const ComplaintDetail = () => {
             )}
           </div>
 
-          <p style={{ color: '#424242', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{complaint.description}</p>
+          <p style={{ color: 'var(--text-primary)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{complaint.description}</p>
 
-          <div className="row g-2 mt-2" style={{ fontSize: 13, color: '#757575' }}>
+          <div className="row g-2 mt-2" style={{ fontSize: 13, color: 'var(--text-muted)' }}>
             {complaint.location && <div className="col-sm-6"><i className="bi bi-geo-alt me-1" />{complaint.location}</div>}
             {complaint.incidentDate && <div className="col-sm-6"><i className="bi bi-calendar-event me-1" />{new Date(complaint.incidentDate).toLocaleDateString()}</div>}
             <div className="col-sm-6"><i className="bi bi-clock me-1" />Submitted: {new Date(complaint.createdAt).toLocaleString()}</div>
@@ -152,28 +152,28 @@ const ComplaintDetail = () => {
         {/* Evidence */}
         {complaint.evidence?.length > 0 && (
           <div className="cg-card mb-3">
-            <h6 style={{ fontWeight: 700, color: '#1a237e', marginBottom: 12 }}>Evidence ({complaint.evidence.length})</h6>
+            <h6 style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>Evidence ({complaint.evidence.length})</h6>
             <div className="d-flex flex-wrap gap-2">
               {complaint.evidence.map((ev, i) => (
-                <a key={i} href={ev.url} target="_blank" rel="noreferrer"
+                <a key={i} href={getEvidenceUrl(ev.url)} target="_blank" rel="noreferrer"
                   style={{ display: 'block', borderRadius: 8, overflow: 'hidden', border: '2px solid #e0e0e0' }}>
                   {(ev.resourceType === 'image' || ev.url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) ? (
                     <>
-                      <img src={ev.url} alt="evidence" style={{ width: 100, height: 80, objectFit: 'cover' }}
+                      <img src={getEvidenceUrl(ev.url)} alt="evidence" style={{ width: 100, height: 80, objectFit: 'cover' }}
                         onError={(e) => {
                           e.target.style.display = 'none';
                           if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
                         }} />
                       <div className="fallback-icon" style={{ width: 100, height: 80, background: '#f5f5f5', display: 'none', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 4 }}>
-                        <i className="bi bi-file-earmark-image" style={{ fontSize: 22, color: '#9e9e9e' }} />
-                        <span style={{ fontSize: 10, color: '#9e9e9e' }}>Image (Broken)</span>
+                        <i className="bi bi-file-earmark-image" style={{ fontSize: 22, color: 'var(--text-muted)' }} />
+                        <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>Image (Broken)</span>
                       </div>
                     </>
                   ) : null}
                   {(ev.resourceType !== 'image' && !ev.url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) && (
-                    <div style={{ width: 100, height: 80, background: '#e8eaf6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 4 }}>
-                      <i className="bi bi-file-earmark" style={{ fontSize: 22, color: '#3949ab' }} />
-                      <span style={{ fontSize: 10, color: '#555' }}>{ev.originalName?.slice(0, 12) || 'View'}</span>
+                    <div style={{ width: 100, height: 80, background: 'var(--bg-base)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 4 }}>
+                      <i className="bi bi-file-earmark" style={{ fontSize: 22, color: 'var(--violet-light)' }} />
+                      <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{ev.originalName?.slice(0, 12) || 'View'}</span>
                     </div>
                   )}
                 </a>
@@ -185,14 +185,14 @@ const ComplaintDetail = () => {
         {/* Status history */}
         {complaint.statusHistory?.length > 0 && (
           <div className="cg-card mb-3">
-            <h6 style={{ fontWeight: 700, color: '#1a237e', marginBottom: 12 }}>Status Timeline</h6>
+            <h6 style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>Status Timeline</h6>
             <div className="comment-timeline">
               {complaint.statusHistory.map((h, i) => (
                 <div key={i} className="comment-item">
                   <div style={{ fontSize: 13 }}>
                     <StatusBadge status={h.status} />
                     {h.note && <span className="ms-2 text-muted">{h.note}</span>}
-                    <div style={{ fontSize: 11, color: '#9e9e9e', marginTop: 3 }}>{new Date(h.changedAt).toLocaleString()}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>{new Date(h.changedAt).toLocaleString()}</div>
                   </div>
                 </div>
               ))}
@@ -202,9 +202,9 @@ const ComplaintDetail = () => {
 
         {/* Resolution */}
         {complaint.resolution && (
-          <div className="cg-card mb-3" style={{ borderLeft: '4px solid #2e7d32' }}>
-            <h6 style={{ fontWeight: 700, color: '#2e7d32' }}><i className="bi bi-check-circle me-2" />Resolution</h6>
-            <p style={{ margin: 0, color: '#424242' }}>{complaint.resolution}</p>
+          <div className="cg-card mb-3" style={{ borderLeft: '4px solid var(--cyan)' }}>
+            <h6 style={{ fontWeight: 700, color: 'var(--cyan)' }}><i className="bi bi-check-circle me-2" />Resolution</h6>
+            <p style={{ margin: 0, color: 'var(--text-secondary)' }}>{complaint.resolution}</p>
           </div>
         )}
 
@@ -229,12 +229,12 @@ const ComplaintDetail = () => {
           </h6>
 
           {publicComments.length === 0 ? (
-            <p style={{ color: '#9e9e9e', fontSize: 14 }}>No updates yet. We'll notify you when there are changes.</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>No updates yet. We'll notify you when there are changes.</p>
           ) : (
             <div className="comment-timeline mb-3">
               {publicComments.map((c, i) => (
                 <div key={i} className="comment-item">
-                  <div style={{ background: c.authorRole === 'student' ? 'rgba(255,255,255,0.05)' : 'rgba(124,58,237,0.1)', borderRadius: 8, padding: '10px 14px', border: '1px solid var(--glass-border)' }}>
+                  <div style={{ background: c.authorRole === 'student' ? 'rgba(255,255,255,0.05)' : 'rgba(225,29,72,0.1)', borderRadius: 8, padding: '10px 14px', border: '1px solid var(--glass-border)' }}>
                     <div className="d-flex justify-content-between align-items-center mb-1">
                       <span style={{ fontSize: 12, fontWeight: 700, color: c.authorRole === 'student' ? 'var(--text-primary)' : 'var(--violet-light)' }}>
                         {c.authorRole !== 'student' && <i className="bi bi-shield-check me-1" />}
@@ -249,7 +249,7 @@ const ComplaintDetail = () => {
             </div>
           )}
 
-          {typingUser && <div style={{ fontSize: 12, color: '#9e9e9e', marginBottom: 8 }}><em>{typingUser} is typing...</em></div>}
+          {typingUser && <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}><em>{typingUser} is typing...</em></div>}
 
           {/* Comment form — only if not closed/rejected */}
           {!['closed', 'rejected'].includes(complaint.status) && (

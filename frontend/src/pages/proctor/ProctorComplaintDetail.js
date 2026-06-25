@@ -5,7 +5,7 @@ import { StatusBadge, PriorityBadge, CategoryBadge } from '../../components/shar
 import { useSocket } from '../../context/SocketContext';
 import { useAuth } from '../../context/AuthContext';
 import ChatPanel from '../../components/shared/ChatPanel';
-import api from '../../utils/api';
+import api, { getEvidenceUrl } from '../../utils/api';
 import toast from 'react-hot-toast';
 
 const ProctorComplaintDetail = () => {
@@ -77,7 +77,7 @@ const ProctorComplaintDetail = () => {
         {/* Header */}
         <div className="cg-card mb-3">
           <div className="d-flex justify-content-between flex-wrap gap-2 mb-2">
-            <span style={{ fontFamily: 'monospace', fontSize: 13, color: '#3949ab', fontWeight: 700 }}>{complaint.referenceNumber}</span>
+            <span style={{ fontFamily: 'monospace', fontSize: 13, color: 'var(--violet-light)', fontWeight: 700 }}>{complaint.referenceNumber}</span>
             <div className="d-flex gap-2 align-items-center">
               <StatusBadge status={complaint.status} />
               {!['resolved', 'rejected', 'closed'].includes(complaint.status) && (
@@ -88,14 +88,14 @@ const ProctorComplaintDetail = () => {
             </div>
           </div>
 
-          <h4 style={{ fontWeight: 800, color: '#1a237e' }}>{complaint.title}</h4>
+          <h4 style={{ fontWeight: 800, color: 'var(--text-primary)' }}>{complaint.title}</h4>
           <div className="d-flex flex-wrap gap-2 mb-3">
             <CategoryBadge category={complaint.category} />
             <PriorityBadge priority={complaint.priority} />
           </div>
-          <p style={{ color: '#424242', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{complaint.description}</p>
+          <p style={{ color: 'var(--text-primary)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{complaint.description}</p>
 
-          <div className="row g-2 mt-2" style={{ fontSize: 13, color: '#757575' }}>
+          <div className="row g-2 mt-2" style={{ fontSize: 13, color: 'var(--text-muted)' }}>
             <div className="col-sm-6">
               <i className="bi bi-person me-1" />
               {complaint.isAnonymous ? <em>Anonymous Submission</em> : (
@@ -111,24 +111,24 @@ const ProctorComplaintDetail = () => {
         {/* Evidence */}
         {complaint.evidence?.length > 0 && (
           <div className="cg-card mb-3">
-            <h6 style={{ fontWeight: 700, color: '#1a237e', marginBottom: 12 }}>Evidence ({complaint.evidence.length})</h6>
+            <h6 style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>Evidence ({complaint.evidence.length})</h6>
             <div className="d-flex flex-wrap gap-2">
               {complaint.evidence.map((ev, i) => (
-                <a key={i} href={ev.url} target="_blank" rel="noreferrer" style={{ borderRadius: 8, overflow: 'hidden', border: '2px solid #e0e0e0', display: 'block' }}>
+                <a key={i} href={getEvidenceUrl(ev.url)} target="_blank" rel="noreferrer" style={{ borderRadius: 8, overflow: 'hidden', border: '2px solid #e0e0e0', display: 'block' }}>
                   {(ev.resourceType === 'image' || ev.url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) ? (
                     <>
-                      <img src={ev.url} alt="evidence" style={{ width: 100, height: 80, objectFit: 'cover' }}
+                      <img src={getEvidenceUrl(ev.url)} alt="evidence" style={{ width: 100, height: 80, objectFit: 'cover' }}
                         onError={(e) => { e.target.style.display = 'none'; if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex'; }} />
                       <div className="fallback-icon" style={{ width: 100, height: 80, background: '#f5f5f5', display: 'none', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 4 }}>
-                        <i className="bi bi-file-earmark-image" style={{ fontSize: 24, color: '#9e9e9e' }} />
-                        <span style={{ fontSize: 10, color: '#9e9e9e' }}>Image (Broken)</span>
+                        <i className="bi bi-file-earmark-image" style={{ fontSize: 24, color: 'var(--text-muted)' }} />
+                        <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>Image (Broken)</span>
                       </div>
                     </>
                   ) : null}
                   {(ev.resourceType !== 'image' && !ev.url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) && (
-                    <div style={{ width: 100, height: 80, background: '#e8eaf6', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 4 }}>
-                      <i className="bi bi-file-earmark" style={{ fontSize: 24, color: '#3949ab' }} />
-                      <span style={{ fontSize: 10, color: '#555' }}>{ev.originalName?.slice(0, 12) || 'View'}</span>
+                    <div style={{ width: 100, height: 80, background: 'var(--bg-base)', border: '1px solid var(--glass-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 4 }}>
+                      <i className="bi bi-file-earmark" style={{ fontSize: 24, color: 'var(--violet-light)' }} />
+                      <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{ev.originalName?.slice(0, 12) || 'View'}</span>
                     </div>
                   )}
                 </a>
@@ -139,8 +139,8 @@ const ProctorComplaintDetail = () => {
 
         {/* Resolution */}
         {complaint.resolution && (
-          <div className="cg-card mb-3" style={{ borderLeft: '4px solid #2e7d32' }}>
-            <h6 style={{ fontWeight: 700, color: '#2e7d32' }}><i className="bi bi-check-circle me-2" />Resolution Note</h6>
+          <div className="cg-card mb-3" style={{ borderLeft: '4px solid var(--cyan)' }}>
+            <h6 style={{ fontWeight: 700, color: 'var(--cyan)' }}><i className="bi bi-check-circle me-2" />Resolution Note</h6>
             <p style={{ margin: 0 }}>{complaint.resolution}</p>
           </div>
         )}
@@ -166,7 +166,7 @@ const ProctorComplaintDetail = () => {
             {complaint.comments?.map((c, i) => (
               <div key={i} className="comment-item">
                 <div style={{
-                  background: c.isInternal ? 'rgba(230,81,0,0.1)' : (c.authorRole === 'student' ? 'rgba(255,255,255,0.05)' : 'rgba(124,58,237,0.1)'),
+                  background: c.isInternal ? 'rgba(230,81,0,0.1)' : (c.authorRole === 'student' ? 'rgba(255,255,255,0.05)' : 'rgba(225,29,72,0.1)'),
                   borderRadius: 8, padding: '10px 14px',
                   border: c.isInternal ? '1px solid rgba(230,81,0,0.3)' : '1px solid var(--glass-border)'
                 }}>
@@ -187,7 +187,7 @@ const ProctorComplaintDetail = () => {
           {/* Internal note toggle */}
           <div className="form-check mb-2">
             <input className="form-check-input" type="checkbox" id="internalCheck" checked={isInternal} onChange={(e) => setIsInternal(e.target.checked)} />
-            <label className="form-check-label" htmlFor="internalCheck" style={{ fontSize: 13, color: isInternal ? '#e65100' : '#555' }}>
+            <label className="form-check-label" htmlFor="internalCheck" style={{ fontSize: 13, color: isInternal ? '#e65100' : 'var(--text-secondary)' }}>
               <i className="bi bi-lock me-1" />Internal note (hidden from student)
             </label>
           </div>
@@ -203,7 +203,7 @@ const ProctorComplaintDetail = () => {
         {/* Status update modal */}
         {statusModal && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-            <div style={{ background: '#1a1040', borderRadius: 16, padding: 28, width: '100%', maxWidth: 440, border: '1px solid var(--glass-border)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
+            <div style={{ background: 'var(--bg-surface)', borderRadius: 16, padding: 28, width: '100%', maxWidth: 440, border: '1px solid var(--glass-border)', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
               <h5 style={{ fontWeight: 800, color: 'var(--text-primary)', marginBottom: 20 }}>Update Complaint Status</h5>
               <form onSubmit={handleStatusUpdate}>
                 <div className="mb-3">
